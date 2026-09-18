@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>WEB SHADOW: ROOFTOP NIGHTMARE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ROTATE DEVICE PROMPT (Visible only when mobile device is in portrait mode) -->
+    <div id="orientation-prompt">
+        <div class="orientation-icon">📱 ↷</div>
+        <h2>PLEASE ROTATE DEVICE</h2>
+        <p>WEB SHADOW is designed for Mobile Landscape gameplay.</p>
+    </div>
+
+    <!-- MAIN GAME WRAPPER (Maintains 16:9 ratio) -->
+    <div id="game-wrapper">
+        <div id="game-container">
+            
+            <!-- GAME CANVAS (1280 x 720 Internal Resolution) -->
+            <canvas id="gameCanvas" width="1280" height="720"></canvas>
+
+            <!-- IN-GAME HUD -->
+            <header id="hud">
+                <div class="hud-left">
+                    <div class="hud-stat-box health-stat">
+                        <span class="hud-label">HEALTH</span>
+                        <div id="hearts-container" class="hearts-row" aria-label="Hero Health">
+                            <span class="heart active">❤️</span>
+                            <span class="heart active">❤️</span>
+                            <span class="heart active">❤️</span>
+                            <span class="heart active">❤️</span>
+                            <span class="heart active">❤️</span>
+                        </div>
+                    </div>
+                    <div class="hud-stat-box web-stat">
+                        <span class="hud-label">WEB AMMO</span>
+                        <div class="hud-bar-track">
+                            <div id="web-ammo-bar" class="hud-bar-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hud-center">
+                    <div id="section-badge">WAR ZONE 1</div>
+                    <div id="section-subtitle">ROOFTOP INFILTRATION</div>
+                </div>
+
+                <div class="hud-right">
+                    <div class="hud-stat-box score-stat">
+                        <span class="hud-label">⭐ SCORE</span>
+                        <span id="score-display">000000</span>
+                    </div>
+                    <div class="hud-stat-box distance-stat">
+                        <span class="hud-label">📍 DISTANCE</span>
+                        <span id="distance-display">0m</span>
+                    </div>
+                    <div class="hud-actions">
+                        <button id="btn-audio-toggle" class="icon-btn" aria-label="Toggle Audio" title="Sound On/Off">🔊</button>
+                        <button id="btn-pause" class="icon-btn" aria-label="Pause Game" title="Pause Game">⏸</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- BOSS HEALTH BAR OVERLAY -->
+            <div id="boss-hud-overlay" class="hidden">
+                <div class="boss-hud-inner">
+                    <div class="boss-header">
+                        <span class="boss-skull">💀</span>
+                        <span class="boss-title">CYBER OVERLORD</span>
+                        <span id="boss-hp-text">1000 / 1000</span>
+                    </div>
+                    <div class="boss-hp-track">
+                        <div id="boss-hp-fill" class="boss-hp-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOBILE ON-SCREEN TOUCH CONTROLS -->
+            <div id="touch-controls">
+                <!-- Left Hand Movement -->
+                <div class="touch-side touch-left">
+                    <button id="touch-btn-left" class="touch-btn dpad-btn" aria-label="Move Left">◀</button>
+                    <button id="touch-btn-right" class="touch-btn dpad-btn" aria-label="Move Right">▶</button>
+                </div>
+                <!-- Right Hand Actions -->
+                <div class="touch-side touch-right">
+                    <button id="touch-btn-jump" class="touch-btn action-btn jump-btn" aria-label="Jump">
+                        <span class="btn-subtext">JUMP</span>
+                        <span class="btn-symbol">▲</span>
+                    </button>
+                    <button id="touch-btn-attack" class="touch-btn action-btn attack-btn" aria-label="Attack">
+                        <span class="btn-subtext">ATTACK</span>
+                        <span class="btn-symbol">⚔️</span>
+                    </button>
+                    <button id="touch-btn-web" class="touch-btn action-btn web-btn" aria-label="Web Attack">
+                        <span class="btn-subtext">WEB</span>
+                        <span class="btn-symbol">🕸️</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- UI SCREEN OVERLAYS -->
+            <!-- 1. START SCREEN -->
+            <div id="screen-start" class="screen-modal active">
+                <div class="modal-card start-card">
+                    <div class="title-emblem">🕷️</div>
+                    <h1 class="game-title">WEB SHADOW</h1>
+                    <p class="game-subtitle">ROOFTOP NIGHTMARE</p>
+                    <div class="title-divider"></div>
+                    <p class="story-tagline">Rooftop warfare has erupted. Leap across skyscraper ruins, crush the syndicates, and bring down the Cyber Overlord.</p>
+                    <div class="menu-button-stack">
+                        <button id="btn-start-game" class="menu-btn primary-pulse-btn">START GAME</button>
+                        <button id="btn-how-to-play" class="menu-btn secondary-btn">HOW TO PLAY</button>
+                        <button id="btn-sound-setting" class="menu-btn sound-btn">SOUND: <span id="sound-state-label">ON</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. HOW TO PLAY MODAL -->
+            <div id="screen-howtoplay" class="screen-modal hidden">
+                <div class="modal-card">
+                    <h2 class="modal-title">MISSION BRIEFING & CONTROLS</h2>
+                    <div class="instruction-grid">
+                        <div class="instruction-column">
+                            <h3>📱 MOBILE CONTROLS</h3>
+                            <ul>
+                                <li><strong>[ ◀ ] [ ▶ ]</strong>: Move left & right</li>
+                                <li><strong>[ JUMP ]</strong>: Leap over gaps & obstacles</li>
+                                <li><strong>[ ATTACK ]</strong>: Melee strike combo (hitbox in front)</li>
+                                <li><strong>[ WEB ]</strong>: Shoot web projectiles at range</li>
+                            </ul>
+                        </div>
+                        <div class="instruction-column">
+                            <h3>⌨️ DESKTOP CONTROLS</h3>
+                            <ul>
+                                <li><strong>Arrow Left / A</strong>: Move Left</li>
+                                <li><strong>Arrow Right / D</strong>: Move Right</li>
+                                <li><strong>Space / Arrow Up / W</strong>: Jump</li>
+                                <li><strong>Z / J</strong>: Melee Attack</li>
+                                <li><strong>X / K</strong>: Web Attack</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="instruction-tips">
+                        <p>💡 <strong>Survival Tip:</strong> Collect gold coins for high scores. Watch out for rooftop gaps and electric generators! Boss attacks include crushing ground slams and energy blasts.</p>
+                    </div>
+                    <button id="btn-close-howtoplay" class="menu-btn primary-pulse-btn">BACK TO MENU</button>
+                </div>
+            </div>
+
+            <!-- 3. PAUSE MODAL -->
+            <div id="screen-pause" class="screen-modal hidden">
+                <div class="modal-card pause-card">
+                    <h2 class="modal-title">GAME PAUSED</h2>
+                    <p class="pause-desc">Take a breath. The skyline awaits.</p>
+                    <div class="menu-button-stack">
+                        <button id="btn-resume" class="menu-btn primary-pulse-btn">RESUME</button>
+                        <button id="btn-restart" class="menu-btn secondary-btn">RESTART</button>
+                        <button id="btn-pause-sound" class="menu-btn sound-btn">SOUND: <span id="pause-sound-label">ON</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. GAME OVER SCREEN -->
+            <div id="screen-gameover" class="screen-modal hidden">
+                <div class="modal-card gameover-card">
+                    <h2 class="modal-title text-red">GAME OVER</h2>
+                    <p class="gameover-quote">The shadow fell from the rooftop...</p>
+                    <div class="stats-summary">
+                        <div class="stat-row">
+                            <span>FINAL SCORE</span>
+                            <strong id="gameover-score">000000</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>DISTANCE REACHED</span>
+                            <strong id="gameover-distance">0m</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>ZONE REACHED</span>
+                            <strong id="gameover-zone">WAR ZONE 1</strong>
+                        </div>
+                    </div>
+                    <div class="menu-button-stack">
+                        <button id="btn-retry" class="menu-btn primary-pulse-btn">RETRY</button>
+                        <button id="btn-gameover-menu" class="menu-btn secondary-btn">MAIN MENU</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. VICTORY SCREEN -->
+            <div id="screen-victory" class="screen-modal hidden">
+                <div class="modal-card victory-card">
+                    <div class="victory-trophy">🏆</div>
+                    <h2 class="modal-title text-gold">MISSION COMPLETE</h2>
+                    <p class="victory-subtitle">BOSS DEFEATED!</p>
+                    <p class="story-tagline">You liberated the rooftop skyline from the Cyber Overlord!</p>
+                    <div class="stats-summary">
+                        <div class="stat-row">
+                            <span>FINAL SCORE</span>
+                            <strong id="victory-score" class="text-gold">000000</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>TOTAL DISTANCE</span>
+                            <strong id="victory-distance">9200m</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>HERO STATUS</span>
+                            <strong class="text-green">LEGENDARY</strong>
+                        </div>
+                    </div>
+                    <div class="menu-button-stack">
+                        <button id="btn-play-again" class="menu-btn primary-pulse-btn">PLAY AGAIN</button>
+                        <button id="btn-victory-menu" class="menu-btn secondary-btn">MAIN MENU</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MAIN GAME SCRIPT -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -8,6 +8,17 @@
 // --------------------------------------------------------------------------
 // 1. SECTION & FLOOR CONFIGURATION (Per-Background Rooftop Geometry)
 // --------------------------------------------------------------------------
+function requestFullScreen() {
+    let elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => console.log("Fullscreen blocked:", err));
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
+}
+
 const SECTION_CONFIG = {
     war1bg: {
         id: 1,
@@ -1608,6 +1619,7 @@ class GameEngine {
         document.getElementById('btn-start-game').addEventListener('click', () => {
             this.audio.init();
             this.startGame();
+            requestFullScreen()
         });
 
         document.getElementById('btn-how-to-play').addEventListener('click', () => {

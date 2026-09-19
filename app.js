@@ -189,7 +189,7 @@ class AudioManager {
                 const audio = new Audio(`assets/audio/${name}.mp3`);
                 audio.preload = 'auto';
                 this.htmlAudioCache[name] = audio;
-            } catch (e) {}
+            } catch (e) { }
         });
     }
 
@@ -233,7 +233,7 @@ class AudioManager {
             try {
                 this.currentMusicAudio.pause();
                 this.currentMusicAudio.currentTime = 0;
-            } catch (e) {}
+            } catch (e) { }
         }
 
         const audio = this.htmlAudioCache[key] || new Audio(`assets/audio/${key}.mp3`);
@@ -248,7 +248,7 @@ class AudioManager {
                     console.log('Autoplay policy caught, will play on user interaction');
                 });
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 
     stopMusic() {
@@ -256,7 +256,7 @@ class AudioManager {
             try {
                 this.currentMusicAudio.pause();
                 this.currentMusicAudio.currentTime = 0;
-            } catch (e) {}
+            } catch (e) { }
         }
     }
 
@@ -358,7 +358,7 @@ class AudioManager {
                     osc.stop(now + 1.2);
                     break;
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 }
 
@@ -1619,7 +1619,9 @@ class GameEngine {
         document.getElementById('btn-start-game').addEventListener('click', () => {
             this.audio.init();
             this.startGame();
-            requestFullScreen()
+            setTimeout(() => {
+                requestFullScreen();
+            }, 100);
         });
 
         document.getElementById('btn-how-to-play').addEventListener('click', () => {
@@ -1688,7 +1690,7 @@ class GameEngine {
 
     init() {
         this.assets.loadAll(
-            (loaded, total) => {},
+            (loaded, total) => { },
             () => {
                 console.log('All Web Shadow assets loaded.');
                 requestAnimationFrame(t => this.gameLoop(t));
